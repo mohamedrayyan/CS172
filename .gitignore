@@ -1,0 +1,7 @@
+.idea/
+.DS_Store
+
+assignment1/.idea/
+assignment1/.DS_Store
+assignment1/.ipynb_checkpoints
+assignment1/__pycache__
