@@ -1,0 +1,9 @@
+.idea/
+.DS_Store
+
+assignment1/.idea/
+assignment1/.DS_Store
+assignment1/.ipynb_checkpoints
+assignment1/__pycache__
+assignment1/__MACOSx
+assignment1/term_index.txt
