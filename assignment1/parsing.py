@@ -43,12 +43,11 @@ def readDocs():
 
                 # step 2 - create tokens
                 # step 3 - build index
-
+    writeIndex()
 
 def readStopWords():
     f = open("stopwords.txt", "r")
     return [x.strip() for x in f]
-
 
 def cleanstr(text):
     pattern = r'\w+(\.?\w+)*'
@@ -63,10 +62,8 @@ def cleanstr(text):
 
     return [x for x in result if x not in stopwords]
 
-
 def calcstats(list, dhash):
     global tokens
-    distinct = 0
 
     for i in range(len(list)):
         ihash = md5Hash(list[i])
@@ -83,10 +80,28 @@ def calcstats(list, dhash):
 
     return len(Counter(list).keys())
 
-
 def md5Hash(text):
     return hashlib.md5(text.encode()).hexdigest()
 
+def writeIndex():
+    print('writing to file')
+    f =open('term_index.txt', 'w')
+
+    line =''
+    print('tokens.keys() =',len(tokens.keys()))
+    for k in tokens.keys():
+        line =str(k)
+        for i in tokens[k]['documents'].keys():
+            line +='\t' +str(i) +':'
+            for p in tokens[k]['documents'][i]['position']:
+                # line +='\t' +str(i) +':' +str(p)
+                line +=str(p) +','
+        f.write(line[:-1] +'\n')
+    f.close()
+    print('finished writing. closing file')
+
+def run():
+    pass
 
 documents = {}
 tokens = {}

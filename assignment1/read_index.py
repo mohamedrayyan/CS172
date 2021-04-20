@@ -34,11 +34,17 @@ if __name__ == '__main__':
     term =''
     docn =''
 
-    if('--term' in sys.argv):
+    if '--term' in sys.argv:
         term =sys.argv[2]
-    if('--doc' in sys.argv):
+    if '--doc' in sys.argv:
         docn =sys.argv[4]
 
-    # doclookup(docn)
-    # termlookup(term)
-    lookUp(term, docn)
+    if term !='' and docn !='':
+        lookUp(term, docn)
+    elif term !='':
+        termlookup(term)
+    elif docn !='':
+        doclookup(docn)
+    else:
+        print('Parameters not recognized')
+
