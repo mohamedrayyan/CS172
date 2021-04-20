@@ -108,3 +108,7 @@ tokens = {}
 stopwords = readStopWords()
 
 readDocs()
+
+# words in quotes don't work
+# add words following 't to stopwords.txt
+# period in front of word doesn't work
