@@ -1,9 +1,7 @@
 import re
 import os
 import zipfile
-import hashlib
 from collections import Counter
-
 
 def readDocs():
     i = 0
@@ -38,7 +36,7 @@ def readDocs():
                 if i == 0:
                     i = 1
                 result = cleanstr(text.lower())
-                dhash = md5Hash(docno.lower())
+                dhash = mhash(docno)
                 documents[dhash] = {'distinct': calcstats(result, dhash), 'total': len(result)}
 
                 # step 2 - create tokens
@@ -66,7 +64,7 @@ def calcstats(list, dhash):
     global tokens
 
     for i in range(len(list)):
-        ihash = md5Hash(list[i])
+        ihash = mhash(list[i])
 
         if ihash not in tokens:
             tokens[ihash] = {'documents': {dhash: {'frequency': 1, 'position': [i + 1]}}, 'frequency': 0}
@@ -80,22 +78,22 @@ def calcstats(list, dhash):
 
     return len(Counter(list).keys())
 
-def md5Hash(text):
-    return hashlib.md5(text.encode()).hexdigest()
+def mhash(text):
+    return ''.join(str(ord(c)) for c in text.upper())
+    # return hashlib.md5(text.encode()).hexdigest()
 
 def writeIndex():
     print('writing to file')
     f =open('term_index.txt', 'w')
 
     line =''
-    print('tokens.keys() =',len(tokens.keys()))
     for k in tokens.keys():
         line =str(k)
         for i in tokens[k]['documents'].keys():
             line +='\t' +str(i) +':'
             for p in tokens[k]['documents'][i]['position']:
                 # line +='\t' +str(i) +':' +str(p)
-                line +=str(p) +','
+                line +=str(p) +' '
         f.write(line[:-1] +'\n')
     f.close()
     print('finished writing. closing file')
@@ -109,6 +107,7 @@ stopwords = readStopWords()
 
 readDocs()
 
+#94395
 # words in quotes don't work
 # add words following 't to stopwords.txt
 # period in front of word doesn't work
