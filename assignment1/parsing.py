@@ -41,7 +41,7 @@ def readDocs():
 
                 # step 2 - create tokens
                 # step 3 - build index
-    writeTermIndex()Index()
+    writeIndex()
 
 def readStopWords():
     f = open("stopwords.txt", "r")
@@ -82,7 +82,7 @@ def mhash(text):
     return ''.join(str(ord(c)) for c in text.upper())
     # return hashlib.md5(text.encode()).hexdigest()
 
-def writeTermIndex():
+def writeIndex():
     tindx =open('term_index.txt', 'w')
     tinfo =open('term_info.txt', 'w')
 
