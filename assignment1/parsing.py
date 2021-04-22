@@ -41,7 +41,7 @@ def readDocs():
 
                 # step 2 - create tokens
                 # step 3 - build index
-    writeIndex()
+    writeTermIndex()Index()
 
 def readStopWords():
     f = open("stopwords.txt", "r")
@@ -82,21 +82,44 @@ def mhash(text):
     return ''.join(str(ord(c)) for c in text.upper())
     # return hashlib.md5(text.encode()).hexdigest()
 
-def writeIndex():
-    print('writing to file')
-    f =open('term_index.txt', 'w')
+def writeTermIndex():
+    tindx =open('term_index.txt', 'w')
+    tinfo =open('term_info.txt', 'w')
 
     line =''
     for k in tokens.keys():
-        line =str(k)
+        line =k
         for i in tokens[k]['documents'].keys():
-            line +='\t' +str(i) +':'
+            line +='   ' +str(i) +':'
             for p in tokens[k]['documents'][i]['position']:
                 # line +='\t' +str(i) +':' +str(p)
                 line +=str(p) +' '
-        f.write(line[:-1] +'\n')
-    f.close()
-    print('finished writing. closing file')
+        tinfo.write(k + ' ' +str(tindx.tell()) +' ' +str(tokens[k]['frequency']) +' '+str(len(tokens[k]['documents'].keys())) +'\n')
+        tindx.write(line[:-1] +'\n')
+    tindx.close()
+    tinfo.close()
+
+def readtermIndex(inline):
+    my_file = open("test.txt", "r")
+    content = my_file.readlines()
+    content = re.sub(r':', " ", content[inline]) #any index will be the line number
+    content_list = content.split('   ')
+    my_file.close()
+
+    freq = 0
+    tokens[content_list[0]] = {'documents':{},'frequency':0}
+    for i in range(1,len(content_list)):
+        l = content_list[i].split(' ')
+        tokens[content_list[0]]['documents'][l[0]] = {'frequency':0, 'position': []}
+        for k in range(1, len(l)):
+             tokens[content_list[0]]['documents'][l[0]]['position'].append(l[k])
+        tokens[content_list[0]]['documents'][l[0]]['frequency'] = len(l)-1
+        freq += len(l)-1
+
+    tokens[content_list[0]]['frequency'] = freq
+
+    # for p in tokens.keys():
+    #     print(tokens[p],"\n")
 
 def run():
     pass
@@ -111,3 +134,7 @@ readDocs()
 # words in quotes don't work
 # add words following 't to stopwords.txt
 # period in front of word doesn't work
+
+# tmp =['123456789', '2525:25 15', '535:55 530']
+
+# haha =['2525', '25', '15']
