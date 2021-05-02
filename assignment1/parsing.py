@@ -149,34 +149,46 @@ def termlookup(term):
 
     print('Listing for term: {}'.format(term))
     print('TERMID: {}'.format(thash))
-    print('Number of documents containing term: {}'.format(tokens[thash]['docnum']))
-    print('Term frequency in corpus: {}'.format(tokens[thash]['frequency']))
+    try:
+        print('Number of documents containing term: {}'.format(tokens[thash]['docnum']))
+        print('Term frequency in corpus: {}'.format(tokens[thash]['frequency']))
+    except:
+        print('term \'' +term +'\' is not found')
+        print('Exiting')
+        exit()
 
 def doclookup(doc):
     dhash =mhash(doc)
 
-    if dhash not in documents:
-        readDoc('ap89_collection_small/'+doc.split('-')[0].lower())
-
     print('Listing for document: {}'.format(doc))
     print('DOCID: {}'.format(dhash))
-    print('Distinct terms: {}'.format(documents[dhash]['distinct']))
-    print('Total terms: {}'.format(documents[dhash]['total']))
+    try:
+        if dhash not in documents:
+            readDoc('ap89_collection_small/' + doc.split('-')[0].lower())
+        print('Distinct terms: {}'.format(documents[dhash]['distinct']))
+        print('Total terms: {}'.format(documents[dhash]['total']))
+    except:
+        print('document \'' +doc +'\' not found')
+        print('Exiting')
+        exit()
 
 def lookUp(term, doc):
     thash =mhash(term)
     dhash =mhash(doc)
 
-    if tokens[thash]['documents'] =={}:
-        readTermIndex(tokens[thash]['offset'])
-
     print('Inverted list for term: {}'.format(term))
     print('In document: {}'.format(doc))
     print('TERMID: {}'.format(thash))
     print('DOCID: {}'.format(dhash))
-    print('Term frequency in document: {}'.format(tokens[thash]['documents'][dhash]['frequency']))
-    print('Positions: {}'.format(tokens[thash]['documents'][dhash]['position']))
 
+    try:
+        if tokens[thash]['documents'] == {}:
+            readTermIndex(tokens[thash]['offset'])
+        print('Term frequency in document: {}'.format(tokens[thash]['documents'][dhash]['frequency']))
+        print('Positions: {}'.format(tokens[thash]['documents'][dhash]['position']))
+    except:
+        print('term \'' +term +'\' or document\'' +doc +'\' are not found')
+        print('Exiting')
 
 documents = {}
 tokens = {}
