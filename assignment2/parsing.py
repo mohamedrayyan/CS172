@@ -2,6 +2,8 @@ import re
 import os
 import zipfile
 from collections import Counter
+from numpy import log as ln
+from math import sqrt as sqrt
 
 def readDocs():
     global documents
@@ -17,7 +19,7 @@ def readDocs():
     for file in allfiles:
         readDoc(file)
 
-    writeIndex()
+    IDF(tokens)
 
 def readDoc(file):
     # Regular expressions to extract data from the corpus
@@ -40,9 +42,20 @@ def readDoc(file):
             # step 1 - lower-case words, remove punctuation, remove stop-words, etc.
             # step 2 - create tokens
             # step 3 - build index
-            result = cleanstr(text.lower())
-            dhash = mhash(docno)
-            documents[dhash] = {'distinct': calcstats(result, dhash), 'total': len(result)}
+            result = cleanstr(text)
+            # dhash = mhash(docno)
+            documents[docno] =TF(result, tokens)
+
+def readQueries(file):
+    f =open(file)
+    queries =[]
+
+    for i in f:
+        queries.append(cleanstr(i))
+
+    f.close()
+
+    return queries
 
 def readStopWords():
     f = open("stopwords.txt", "r")
@@ -51,6 +64,7 @@ def readStopWords():
 def cleanstr(text):
     pattern = r'\w+(\.?\w+)*'
     result = []
+    text =text.lower()
 
     # for i in text.split():
     for i in re.findall(r"[a-z0-9'.@#]+\S", text):
@@ -61,134 +75,73 @@ def cleanstr(text):
 
     return [x for x in result if x not in stopwords]
 
-def calcstats(list, dhash):
-    global tokens
+def TF(list, tokens):
+    doc ={}
 
-    for i in range(len(list)):
-        ihash = mhash(list[i])
+    counted =Counter(list)
+    for i in counted:
+        ihash = mhash(i)
+
+        doc[ihash] =counted[i] /len(list)
 
         if ihash not in tokens:
-            tokens[ihash] = {'documents': {dhash: {'frequency': 1, 'position': [i + 1]}}, 'docnum': 0, 'frequency': 0}
-        elif dhash not in tokens[ihash]['documents']:
-            tokens[ihash]['documents'][dhash] = {'frequency': 1, 'position': [i + 1]}
+            tokens[ihash] ={'docfreq': 1}
         else:
-            tokens[ihash]['documents'][dhash]['frequency'] += 1
-            tokens[ihash]['documents'][dhash]['position'].append(i + 1)
+            tokens[ihash]['docfreq'] +=1
 
-        tokens[ihash]['frequency'] += 1
-        tokens[ihash]['docnum'] =len(tokens[ihash]['documents'])
+    return doc
 
-    return len(Counter(list).keys())
+def IDF(tokens):
+    for k in tokens.keys():
+        tokens[k]['idf'] =(1+ln(len(documents.keys()) /tokens[k]['docfreq']))
+
+def qTFIDF(list):
+    doc ={}
+
+    counted =Counter(list)
+    for i in counted:
+        ihash =mhash(i)
+
+        doc[ihash] =counted[i] *tokens[ihash]['idf']
+    return doc
 
 def mhash(text):
     return ''.join(str(ord(c)) for c in text.upper())
     # return hashlib.md5(text.encode()).hexdigest()
 
-def writeIndex():
-    tindx =open('term_index.txt', 'w')
-    tinfo =open('term_info.txt', 'w')
-
-    line =''
-    for k in tokens.keys():
-        line =k
-        for i in tokens[k]['documents'].keys():
-            line +='   ' +str(i) +':'
-            for p in tokens[k]['documents'][i]['position']:
-                line +=str(p) +' '
-            line =line[:-1]
-        tinfo.write(k + ' ' +str(tindx.tell()) +' ' +str(tokens[k]['frequency']) +' '+str(len(tokens[k]['documents'].keys())) +'\n')
-        # tindx.write(line[:-1] +'\n')
-        tindx.write(line +'\n')
-    tindx.close()
-    tinfo.close()
-
-def readTermIndex(inline):
-    my_file = open("term_index.txt", "r")
-
-    my_file.seek(inline)
-    content =my_file.readline()
-
-    my_file.close()
-
-    content =re.sub(r':', ' ', content)
-    content =content.rstrip('\n')
-
-    content_list =content.split('   ')
-
-    for i in range(1,len(content_list)):
-        l =content_list[i].split(' ')
-        tokens[content_list[0]]['documents'][l[0]] ={'frequency': 0, 'position': []}
-        for k in range(1, len(l)):
-            tokens[content_list[0]]['documents'][l[0]]['position'].append(int(l[k]))
-        tokens[content_list[0]]['documents'][l[0]]['frequency'] =len(l)-1
-
-def readTermInfo():
-    f =open('term_info.txt', 'r')
-
-    for line in f.readlines():
-        linesplit =line.split(' ')
-
-        tokens[linesplit[0]] = {'documents': {}, 'offset': int(linesplit[1]), 'docnum': int(linesplit[2]), 'frequency': int(linesplit[3])}
-
-    f.close()
-
 def run():
-    if os.path.exists('term_info.txt') and os.path.exists('term_index.txt'):
-        readTermInfo()
-    else:
-        readDocs()
+    readDocs()
 
-#94395
-# words in quotes don't work
-# add words following 't to stopwords.txt
-# period in front of word doesn't work
+def rank(querylist, outputfile):
+    queries =readQueries(querylist);
+    f =open(outputfile, 'w')
 
+    for q in queries:
+        qtfidf =qTFIDF(q[1:])
+        result ={}
+        for k in documents:
+            numer =0
+            qdeno =0
+            ddeno =0
+            for i in qtfidf:
+                if i in documents[k]:
+                    numer +=(qtfidf[i] *(documents[k][i] *tokens[i]['idf']))
+                    ddeno +=(documents[k][i] *tokens[i]['idf']) **2
+                qdeno +=qtfidf[i] **2
+            # result[k] =numer /(sqrt(qdeno) *sqrt(ddeno))
+            if ddeno ==0:
+                result[k] =0
+            else:
+                result[k] = numer / (sqrt(qdeno) * sqrt(ddeno))
+        result =sorted(result.items(), key=lambda x: x[1], reverse=True)
 
-def termlookup(term):
-    thash =mhash(term)
+        counter =1
+        for i in result[:10]:
+            line =str(q[0])  +' Q0 ' +str(i[0]) +' ' +str(counter) +' ' +str(i[1]) +' EXP' +'\n'
+            f.write(line)
 
-    print('Listing for term: {}'.format(term))
-    print('TERMID: {}'.format(thash))
-    try:
-        print('Number of documents containing term: {}'.format(tokens[thash]['docnum']))
-        print('Term frequency in corpus: {}'.format(tokens[thash]['frequency']))
-    except:
-        print('term \'' +term +'\' is not found')
-        print('Exiting')
-        exit()
-
-def doclookup(doc):
-    dhash =mhash(doc)
-
-    print('Listing for document: {}'.format(doc))
-    print('DOCID: {}'.format(dhash))
-    try:
-        if dhash not in documents:
-            readDoc('ap89_collection_small/' + doc.split('-')[0].lower())
-        print('Distinct terms: {}'.format(documents[dhash]['distinct']))
-        print('Total terms: {}'.format(documents[dhash]['total']))
-    except:
-        print('document \'' +doc +'\' not found')
-        print('Exiting')
-        exit()
-
-def lookUp(term, doc):
-    thash =mhash(term)
-    dhash =mhash(doc)
-
-    print('Inverted list for term: {}'.format(term))
-    print('In document: {}'.format(doc))
-    print('TERMID: {}'.format(thash))
-    print('DOCID: {}'.format(dhash))
-
-    try:
-        if tokens[thash]['documents'] == {}:
-            readTermIndex(tokens[thash]['offset'])
-        print('Term frequency in document: {}'.format(tokens[thash]['documents'][dhash]['frequency']))
-        print('Positions: {}'.format(tokens[thash]['documents'][dhash]['position']))
-    except:
-        print('term \'' +term +'\' or document\'' +doc +'\' are not found')
-        print('Exiting')
+            counter +=1
+    f.close()
 
 documents = {}
 tokens = {}

@@ -4,23 +4,14 @@ import sys
 from parsing import *
 
 if __name__ == '__main__':
-    term =''
-    docn =''
+    querylist =''
+    outputfile =''
 
-    if '--term' in sys.argv and '--doc' in sys.argv:
-        term =sys.argv[2]
-        docn =sys.argv[4]
-    elif '--term' in sys.argv:
-        term =sys.argv[2]
-    elif '--doc' in sys.argv:
-        docn =sys.argv[2]
-
-    if term !='' and docn !='':
-        lookUp(term, docn)
-    elif term !='':
-        termlookup(term)
-    elif docn !='':
-        doclookup(docn)
+    if(len(sys.argv) <3 or len(sys.argv) >3):
+        print('Invalid arguments')
+        exit()
     else:
-        print('Parameters not recognized')
+        querylist =sys.argv[1]
+        outputfile =sys.argv[2]
 
+        rank(querylist, outputfile)
