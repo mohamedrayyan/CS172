@@ -3,8 +3,6 @@ import requests
 from requests.api import get
 import bs4
 import sys
-from elasticsearch import Elasticsearch
-from datetime import datetime
 import os
 
 def getBodyLinks(body):
@@ -25,7 +23,6 @@ def bulkUpload(filename):
     print()
 
 if __name__ =='__main__':
-    es = Elasticsearch()
     numpages =int(sys.argv[2])
     f =open(sys.argv[1], 'r')
 
