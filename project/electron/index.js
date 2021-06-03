@@ -10,6 +10,9 @@ function search(object) {
 
     require('child_process').exec(command, function(err, data, stderr) { 
         data =JSON.parse(data);
+
+        console.log(data);
+
         hits =data['hits']['hits'];
 
         hits.sort((a, b) => (a._score < b._score) ? 1 : -1)
