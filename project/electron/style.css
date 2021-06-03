@@ -1,0 +1,79 @@
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin: 0;
+    background-color: #e6ecf0;
+}
+
+.maindiv{
+    background: rgb(58, 64, 69);
+    padding: 40px;
+    max-width: 800px;
+    height: 800px;
+    margin: 40px auto;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px 4px rgb(19 35 47 / 30%);
+
+}
+.maindiv header{
+    background-color: none;
+    color: aliceblue;
+    margin-left: -40px;
+    margin-top: -20px;
+    width: 800px;
+    height: 40px;
+  }
+.namecenter{
+    text-align: center;
+}  
+.maindiv h2{
+    margin-top: 0px;
+    text-align: center;
+}
+
+.thesearch{
+    display: flex;
+    border-bottom: 1px solid aliceblue;
+    width: 800px;
+    margin-left: -40px;
+}
+.searchbar {
+    width: 450px;
+    height: 30px;
+    border-radius: 25px;
+    outline: none;
+    margin-left: 140px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+    border-width: thin;
+    border: 1px solid  #4AB3F4;
+    color: black;
+    text-indent: 5px;
+    padding-right: 3ch;
+}
+.listofresult{
+    max-width: 800px;
+    height: 720px;
+    background: rgb(75, 78, 80);
+    color: rgb(58, 64, 69);
+    box-shadow: 0 4px 10px 4px rgb(19 35 47 / 30%);
+    border-radius: 4px;
+    margin-top: 5px;
+    padding: 5px;
+    overflow-y: auto;
+
+}
+
+.textcontent{
+    width: 774px;
+    height: fit-content;
+    background: rgb(223, 229, 233);
+    color: rgb(58, 64, 69);
+    box-shadow: 0 4px 10px 4px rgb(19 35 47 / 30%);
+    border-radius: 4px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 4px;
+    display: inline-block;
+    overflow-y: auto;
+}
+

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" integrity="sha256-qM7QTJSlvtPSxVRjVWNM2OfTAz/3k5ovHOKmKXuYMO4=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Anton:regular" media="all">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title> crawlers </title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="index.js"></script>
+    </head>
+    <body>
+        <div class = "maindiv">
+            <header>
+                <div class ="namecenter">
+                    <h2> Crawlers </h2>
+                </div>
+            </header>
+            <div class ="thesearch">
+                <!-- <input class="searchbar" type="text" id="myInput" onkeyup="searchword()" placeholder="search..."></input>
+                <i onclick="load(this)" class="fa fa-play-circle" style="padding: 2px; margin-top:0.3ch; font-size:32px;color:rgb(0, 183, 255)"></i> -->
+                <input id="search" class="searchbar" type="text" placeholder="Search.." name="search">
+                <button onclick="search(document.getElementById('search'))" type="submit" style="border-radius: 30px; font-size:18px; border: 1px solid  #4AB3F4;" id="myInput"><i class="fa fa-search"></i></button>
+            </div>
+            <div class="listofresult" id="resultdiv">
+            </div>
+        </div>
+    </body>
+</html>  
